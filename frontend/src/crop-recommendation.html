@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - AI Crop Recommendation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 50%, #CDDC39 100%);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .crop-recommendation-container {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .crop-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .crop-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #2E7D32;
+            font-size: 24px;
+            font-weight: bold;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .crop-title {
+            color: #1B5E20;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
+        }
+
+        .crop-form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .input-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .crop-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #1B5E20;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .crop-input {
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            color: #2E7D32;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .crop-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .crop-input::placeholder {
+            color: #81C784;
+        }
+
+        .get-recommendation-btn {
+            background: linear-gradient(135deg, #FF8F00 0%, #FFB300 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(255, 143, 0, 0.4);
+            margin-top: 10px;
+        }
+
+        .get-recommendation-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 143, 0, 0.6);
+            background: linear-gradient(135deg, #FFB300 0%, #FFC107 100%);
+        }
+
+        .get-recommendation-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .recommended-crops-card,
+        .crop-guide-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-height: 200px;
+        }
+
+        .recommended-crops-card h3,
+        .crop-guide-card h3 {
+            color: #1B5E20;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .placeholder-text {
+            color: #388E3C;
+            font-style: italic;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .crops-result,
+        .guide-result {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .crop-result-item {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .crop-name {
+            font-weight: bold;
+            color: #1B5E20;
+            font-size: 1.2rem;
+        }
+
+        .crop-confidence {
+            color: #388E3C;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .crop-form-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .crop-title {
+                font-size: 2rem;
+            }
+            
+            .input-section,
+            .recommended-crops-card,
+            .crop-guide-card {
+                padding: 20px;
+            }
+            
+            .back-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="crop-recommendation-container">
+        <div class="crop-content">
+            <div class="crop-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <h1 class="crop-title">AI-Based Crop Recommendation</h1>
+            </div>
+            
+            <div class="crop-form-section">
+                <div class="input-section">
+                    <form class="crop-form" onsubmit="getCropRecommendation(event)">
+                        <div class="form-group">
+                            <label for="nitrogen-crop">Nitrogen (N)</label>
+                            <input type="number" id="nitrogen-crop" required class="crop-input" placeholder="Enter nitrogen level">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phosphorus-crop">Phosphorus (P)</label>
+                            <input type="number" id="phosphorus-crop" required class="crop-input" placeholder="Enter phosphorus level">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="potassium-crop">Potassium (K)</label>
+                            <input type="number" id="potassium-crop" required class="crop-input" placeholder="Enter potassium level">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="temperature">Temperature (°C)</label>
+                            <input type="number" id="temperature" required class="crop-input" placeholder="Enter temperature">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="humidity">Humidity (%)</label>
+                            <input type="number" id="humidity" min="0" max="100" required class="crop-input" placeholder="Enter humidity">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ph-crop">pH</label>
+                            <input type="number" id="ph-crop" step="0.1" min="0" max="14" required class="crop-input" placeholder="Enter pH value">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rainfall">Rainfall (mm)</label>
+                            <input type="number" id="rainfall" required class="crop-input" placeholder="Enter rainfall">
+                        </div>
+                        
+                        <button type="submit" class="get-recommendation-btn">Get Recommendation</button>
+                    </form>
+                </div>
+                
+                <div class="results-section">
+                    <div class="recommended-crops-card">
+                        <h3>Recommended Crops:-</h3>
+                        <div class="crops-result" id="cropsResult">
+                            <p class="placeholder-text">Enter soil and weather data to get AI-powered crop recommendations</p>
+                        </div>
+                    </div>
+                    
+                    <div class="crop-guide-card">
+                        <h3>Crop Guide:-</h3>
+                        <div class="guide-result" id="guideResult">
+                            <p class="placeholder-text">Detailed farming guide will appear after recommendation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback - you can redirect to your main page
+                window.location.href = '/';
+            }
+        }
+
+        function getCropRecommendation(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = {
+                nitrogen: document.getElementById('nitrogen-crop').value,
+                phosphorus: document.getElementById('phosphorus-crop').value,
+                potassium: document.getElementById('potassium-crop').value,
+                temperature: document.getElementById('temperature').value,
+                humidity: document.getElementById('humidity').value,
+                ph: document.getElementById('ph-crop').value,
+                rainfall: document.getElementById('rainfall').value
+            };
+            
+            // Show loading state
+            const cropsResult = document.getElementById('cropsResult');
+            const guideResult = document.getElementById('guideResult');
+            
+            cropsResult.innerHTML = '<div class="loading"></div>';
+            guideResult.innerHTML = '<div class="loading"></div>';
+            
+            // Simulate AI recommendation (replace with actual API call)
+            setTimeout(() => {
+                const recommendations = generateMockRecommendations(formData);
+                displayRecommendations(recommendations);
+            }, 2000);
+        }
+
+        function generateMockRecommendations(data) {
+            // This is a mock function - replace with actual AI model integration
+            const crops = [
+                { name: 'Rice', confidence: 92, reason: 'High humidity and adequate rainfall' },
+                { name: 'Wheat', confidence: 87, reason: 'Suitable temperature and pH levels' },
+                { name: 'Corn', confidence: 83, reason: 'Good nitrogen levels and temperature' }
+            ];
+            
+            const guide = {
+                primaryCrop: 'Rice',
+                sowingTime: 'June-July (Kharif season)',
+                waterRequirement: '1200-2500mm annually',
+                fertilizer: 'NPK ratio 4:2:1, apply urea in split doses',
+                harvesting: '110-120 days after sowing',
+                expectedYield: '4-6 tons per hectare'
+            };
+            
+            return { crops, guide };
+        }
+
+        function displayRecommendations(recommendations) {
+            const cropsResult = document.getElementById('cropsResult');
+            const guideResult = document.getElementById('guideResult');
+            
+            // Display recommended crops
+            let cropsHTML = '';
+            recommendations.crops.forEach(crop => {
+                cropsHTML += `
+                    <div class="crop-result-item">
+                        <div class="crop-name">${crop.name}</div>
+                        <div class="crop-confidence">Confidence: ${crop.confidence}% - ${crop.reason}</div>
+                    </div>
+                `;
+            });
+            cropsResult.innerHTML = cropsHTML;
+            
+            // Display crop guide
+            const guide = recommendations.guide;
+            const guideHTML = `
+                <div style="text-align: left; color: #1B5E20;">
+                    <p><strong>Primary Recommendation:</strong> ${guide.primaryCrop}</p>
+                    <p><strong>Sowing Time:</strong> ${guide.sowingTime}</p>
+                    <p><strong>Water Requirement:</strong> ${guide.waterRequirement}</p>
+                    <p><strong>Fertilizer:</strong> ${guide.fertilizer}</p>
+                    <p><strong>Harvesting:</strong> ${guide.harvesting}</p>
+                    <p><strong>Expected Yield:</strong> ${guide.expectedYield}</p>
+                </div>
+            `;
+            guideResult.innerHTML = guideHTML;
+        }
+
+        // Add smooth scrolling and animations
+        document.querySelectorAll('.crop-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

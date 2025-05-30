@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="overlay"></div>
+        <div class="login-content">
+            <div class="login-form-container">
+                <h1 class="login-title">LOGIN</h1>
+                
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <input type="email" placeholder="Email" required class="login-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="password" placeholder="Password" required class="login-input">
+                    </div>
+                    
+                    <div class="forgot-password">
+                        <a href="#" class="forgot-link">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-button">LOGIN</button>
+                </form>
+                
+                <div class="social-login">
+                    <p class="social-text">sign in with</p>
+                    <div class="social-buttons">
+                        <button class="google-btn" onclick="socialLogin('google')">
+                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="20" height="20">
+                        </button>
+                        <button class="facebook-btn" onclick="socialLogin('facebook')">
+                            <span style="color: #1877F2; font-size: 20px; font-weight: bold;">f</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="signup-link">
+                    <p>If you are new here, <a href="create-profile.html" class="signup-text">sign up now</a></p>
+                </div>
+            </div>
+            
+           
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    
+</body>
+</html>

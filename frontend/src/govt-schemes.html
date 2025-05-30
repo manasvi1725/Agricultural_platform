@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Government Schemes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="govt-schemes-container">
+        <div class="overlay"></div>
+        <div class="schemes-content">
+            <div class="schemes-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <h1 class="schemes-title">"Find Government Schemes & Subsidies for You"</h1>
+            </div>
+            
+            <div class="schemes-form-section">
+                <div class="form-section">
+                    <p class="form-description">Fill in your details to get personalized scheme recommendations based on your profile and needs.</p>
+                    
+                    <form class="schemes-form" id="schemesForm" onsubmit="getSchemeRecommendations(event)">
+                        <div class="form-group">
+                            <label for="scheme-state">Step 1: Select State</label>
+                            <select id="scheme-state" name="state" required class="schemes-input">
+                                <option value="">Select State</option>
+                                <option value="andhra-pradesh">Andhra Pradesh</option>
+                                <option value="assam">Assam</option>
+                                <option value="bihar">Bihar</option>
+                                <option value="gujarat">Gujarat</option>
+                                <option value="haryana">Haryana</option>
+                                <option value="karnataka">Karnataka</option>
+                                <option value="kerala">Kerala</option>
+                                <option value="madhya-pradesh">Madhya Pradesh</option>
+                                <option value="maharashtra">Maharashtra</option>
+                                <option value="odisha">Odisha</option>
+                                <option value="punjab">Punjab</option>
+                                <option value="rajasthan">Rajasthan</option>
+                                <option value="tamil-nadu">Tamil Nadu</option>
+                                <option value="telangana">Telangana</option>
+                                <option value="uttar-pradesh">Uttar Pradesh</option>
+                                <option value="west-bengal">West Bengal</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scheme-category">Step 2: Select Category</label>
+                            <select id="scheme-category" name="category" required class="schemes-input">
+                                <option value="">Select Category</option>
+                                <option value="small-marginal">Small & Marginal Farmers</option>
+                                <option value="women-farmers">Women Farmers</option>
+                                <option value="young-farmers">Young Farmers</option>
+                                <option value="organic-farmers">Organic Farmers</option>
+                                <option value="tribal-farmers">Tribal Farmers</option>
+                                <option value="general">General Category</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scheme-needs">Step 3: Choose Needs</label>
+                            <select id="scheme-needs" name="needs" required class="schemes-input">
+                                <option value="">Select Your Needs</option>
+                                <option value="crop-insurance">Crop Insurance</option>
+                                <option value="farm-equipment">Farm Equipment Subsidy</option>
+                                <option value="irrigation">Irrigation Support</option>
+                                <option value="credit-support">Credit & Loan Support</option>
+                                <option value="seed-subsidy">Seed Subsidy</option>
+                                <option value="fertilizer-subsidy">Fertilizer Subsidy</option>
+                                <option value="market-linkage">Market Linkage</option>
+                                <option value="training-support">Training & Skill Development</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="submit-schemes-btn">SUBMIT</button>
+                    </form>
+                </div>
+                
+                <div class="results-section">
+                    <div class="results-header">
+                        <h2>RESULTS:</h2>
+                    </div>
+                    <div class="results-content" id="schemesResults">
+                        <!-- Scheme results will appear here -->
+                        <div class="placeholder-schemes">
+                            <p>Select your state, category, and needs to see personalized government schemes and subsidies available for you.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript functions
+        async function getSchemeRecommendations(e) {
+            e.preventDefault();
+            console.log('Form submitted!'); // Debug log
+            
+            const state = document.getElementById('scheme-state').value;
+            const category = document.getElementById('scheme-category').value;
+            const needs = document.getElementById('scheme-needs').value;
+            
+            console.log('Form values:', { state, category, needs }); // Debug log
+            
+            if (!state || !category || !needs) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const btn = document.querySelector('.submit-schemes-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Loading...';
+            }
+            
+            try {
+                console.log('Making API call...'); // Debug log
+                
+                const response = await fetch('http://127.0.0.1:5000/api/govt-schemes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        state: state, 
+                        category: category, 
+                        needs: needs 
+                    })
+                });
+                
+                console.log('Response status:', response.status); // Debug log
+                console.log('Response:', response); // Debug log
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('API Response:', result); // Debug log
+                    console.log('Number of schemes:', result.schemes ? result.schemes.length : 0); // Debug log
+                    
+                    if (result.error) {
+                        console.error('API returned error:', result.error);
+                        throw new Error(result.error);
+                    }
+                    
+                    displayGovernmentSchemes(result.schemes || []);
+                } else {
+                    const errorText = await response.text();
+                    console.error('API failed with status:', response.status, 'Error:', errorText);
+                    throw new Error(`API failed with status ${response.status}: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                alert(`API Error: ${error.message}. Check console for details.`);
+                
+                // Show the error to user
+                displayError(error.message);
+            }
+            
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'SUBMIT';
+            }
+        }
+
+        function displayGovernmentSchemes(schemes) {
+            const resultBox = document.getElementById('schemesResults');
+            if (resultBox) {
+                if (!schemes || schemes.length === 0) {
+                    resultBox.innerHTML = `
+                        <div class="no-schemes">
+                            <h3>😔 No schemes found</h3>
+                            <p>Try different filters or check back later for new schemes.</p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.innerHTML = `
+                        <h3>💰 Available Schemes (${schemes.length} found):</h3>
+                        <div class="schemes-list">
+                            ${schemes.map(scheme => `
+                                <div class="scheme-item">
+                                    <div class="scheme-header">
+                                        <strong>${scheme.scheme_name}</strong>
+                                        <span class="scheme-authority">${scheme.managing_authority || 'N/A'}</span>
+                                    </div>
+                                    <p><strong>Description:</strong> ${scheme.description}</p>
+                                    <p><strong>State:</strong> ${scheme.state || 'N/A'}</p>
+                                    <p><strong>Type:</strong> ${scheme.type || 'N/A'}</p>
+                                    ${scheme.link && scheme.link !== '#' ? `<a href="${scheme.link}" target="_blank" class="scheme-link">Apply/Learn More →</a>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                resultBox.style.display = 'block';
+            }
+        }
+
+        function displayError(errorMessage) {
+            const resultBox = document.getElementById('schemesResults');
+            if (resultBox) {
+                resultBox.innerHTML = `
+                    <div class="error-message">
+                        <h3>❌ Error</h3>
+                        <p>${errorMessage}</p>
+                        <p>Please check the browser console for more details.</p>
+                    </div>
+                `;
+                resultBox.style.display = 'block';
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

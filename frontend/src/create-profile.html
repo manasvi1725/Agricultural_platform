@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Create Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="create-profile-container">
+        <div class="overlay"></div>
+        <div class="profile-content">
+            <div class="profile-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <h1 class="profile-title">CREATE YOUR PROFILE</h1>
+                <div class="language-selector">
+                    <label for="language">Select Language</label>
+                    <select id="language" class="language-dropdown">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="bn">বাংলা</option>
+                    </select>
+                </div>
+            </div>
+            
+            <form class="profile-form" onsubmit="handleProfileCreation(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" required class="profile-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date Of Birth(DOB)</label>
+                        <input type="date" id="dob" required class="profile-input">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" class="profile-input">
+                            <option value="India">India</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="Nepal">Nepal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="farmer-type">Type of Farmer</label>
+                        <select id="farmer-type" required class="profile-input">
+                            <option value="">Select Type</option>
+                            <option value="small">Small Scale</option>
+                            <option value="medium">Medium Scale</option>
+                            <option value="large">Large Scale</option>
+                            <option value="organic">Organic Farmer</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <select id="state" required class="profile-input">
+                            <option value="">Select State</option>
+                            <option value="punjab">Punjab</option>
+                            <option value="haryana">Haryana</option>
+                            <option value="uttar-pradesh">Uttar Pradesh</option>
+                            <option value="maharashtra">Maharashtra</option>
+                            <option value="karnataka">Karnataka</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="farming-type">Type of Farming</label>
+                        <select id="farming-type" required class="profile-input">
+                            <option value="">Select Type</option>
+                            <option value="traditional">Traditional</option>
+                            <option value="organic">Organic</option>
+                            <option value="hydroponic">Hydroponic</option>
+                            <option value="mixed">Mixed Farming</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <select id="city" required class="profile-input">
+                            <option value="">Select City</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="kolkata">Kolkata</option>
+                            <option value="chennai">Chennai</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" required class="profile-input">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-button">SUBMIT</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

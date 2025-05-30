@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Plant Disease Detection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="disease-detection-container">
+        <div class="overlay"></div>
+        <div class="detection-content">
+            <div class="detection-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <h1 class="detection-title">Plant Disease Detection</h1>
+            </div>
+            
+            <div class="detection-main">
+                <div class="upload-section">
+                    <div class="upload-card">
+                        <div class="upload-icon">📷</div>
+                        <h3>Upload Plant Image</h3>
+                        <p>Take a clear photo of the affected leaf or plant part</p>
+                        
+                        <div class="upload-area" id="uploadArea" >
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <div class="upload-symbol">+</div>
+                                <p>Click to upload or drag and drop</p>
+                                <span class="file-types">JPG, PNG, JPEG (Max 5MB)</span>
+                            </div>
+                            <img id="previewImage" class="preview-image" style="display: none;" />
+                        </div>
+                        
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;" >
+                        
+                        <button class="analyze-btn" id="analyzeBtn" disabled>
+                            Analyze Disease
+                        </button>
+                        
+                        <div class="detection-tips">
+                            <h4>📸 Tips for Better Detection:</h4>
+                            <ul>
+                                <li>Take photos in good lighting</li>
+                                <li>Focus on the affected area</li>
+                                <li>Avoid blurry images</li>
+                                <li>Include the entire leaf if possible</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-section">
+                    <div class="results-card">
+                        <h3>🔍 Analysis Results</h3>
+                        <div class="results-content" id="detectionResults">
+                            <div class="placeholder-detection">
+                                <div class="analysis-icon">🌿</div>
+                                <p>Upload a plant image to get instant disease detection and treatment recommendations</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="treatment-card" id="treatmentCard" style="display: none;">
+                        <h3>💊 Treatment Recommendations</h3>
+                        <div class="treatment-content" id="treatmentContent">
+                            <!-- Treatment recommendations will appear here -->
+                        </div>
+                    </div>
+                    
+                    <div class="prevention-card" id="preventionCard" style="display: none;">
+                        <h3>🛡️ Prevention Tips</h3>
+                        <div class="prevention-content" id="preventionContent">
+                            <!-- Prevention tips will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

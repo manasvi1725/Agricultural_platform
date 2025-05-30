@@ -1,0 +1,52 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link rel="stylesheet" href="styles.css"> <!-- optional: for styles -->
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+      <div class="profile-section">
+        <div class="profile-avatar">
+          <div class="avatar-placeholder"></div>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">
+            <span>Name</span>
+            <span class="edit-icon">✏️</span>
+          </div>
+          <div class="profile-location">India</div>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-item">Gender</div>
+        <div class="detail-item">Age</div>
+        <div class="detail-item">State</div>
+        <div class="detail-item">City</div>
+        <div class="detail-item">Login ID</div>
+      </div>
+
+      <div class="history-section">
+        <h3>History 📊</h3>
+        <div class="history-content">
+          <!-- History items will be populated here -->
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logout()">LogOut</button>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      // Handle logout logic here
+      alert("Logged out!");
+    }
+  </script>
+</body>
+</html>

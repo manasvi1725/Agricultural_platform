@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Weather Alerts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="weather-container">
+        <div class="overlay"></div>
+        <div class="weather-content">
+            <div class="weather-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <h1 class="weather-title">🌤️ Weather Alerts & Forecast</h1>
+            </div>
+            
+            <div class="weather-main">
+                <div class="location-section">
+                    <div class="location-card">
+                        <h3>📍 Set Your Location</h3>
+                        <div class="location-input-group">
+                            <select id="weatherState" class="weather-input">
+                                <option value="">Select State</option>
+                                <option value="punjab">Punjab</option>
+                                <option value="haryana">Haryana</option>
+                                <option value="uttar-pradesh">Uttar Pradesh</option>
+                                <option value="maharashtra">Maharashtra</option>
+                                <option value="karnataka">Karnataka</option>
+                                <option value="tamil-nadu">Tamil Nadu</option>
+                                <option value="gujarat">Gujarat</option>
+                                <option value="rajasthan">Rajasthan</option>
+                            </select>
+                            
+                            <select id="weatherCity" class="weather-input">
+                                <option value="">Select City</option>
+                                <option value="delhi">Delhi</option>
+                                <option value="mumbai">Mumbai</option>
+                                <option value="bangalore">Bangalore</option>
+                                <option value="chennai">Chennai</option>
+                                <option value="kolkata">Kolkata</option>
+                                <option value="ahmedabad">Ahmedabad</option>
+                                <option value="jaipur">Jaipur</option>
+                            </select>
+                            
+                            <button class="get-weather-btn" onclick="getWeatherData()">Get Weather</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="current-weather-section">
+                    <div class="current-weather-card">
+                        <h3>🌡️ Current Weather</h3>
+                        <div class="current-weather-content" id="currentWeather">
+                            <div class="weather-placeholder">
+                                <div class="weather-icon">🌤️</div>
+                                <p>Select your location to get current weather information</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alerts-section">
+                    <div class="alerts-card">
+                        <h3>⚠️ Weather Alerts</h3>
+                        <div class="alerts-content" id="weatherAlerts">
+                            <div class="alerts-placeholder">
+                                <div class="alert-icon">🔔</div>
+                                <p>No active weather alerts for your area</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="forecast-section">
+                    <div class="forecast-card">
+                        <h3>📅 7-Day Forecast</h3>
+                        <div class="forecast-content" id="weatherForecast">
+                            <div class="forecast-placeholder">
+                                <div class="forecast-icon">📊</div>
+                                <p>7-day weather forecast will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="farming-advice-section">
+                    <div class="farming-advice-card">
+                        <h3>🌾 Farming Advice</h3>
+                        <div class="advice-content" id="farmingAdvice">
+                            <div class="advice-placeholder">
+                                <div class="advice-icon">💡</div>
+                                <p>Weather-based farming recommendations will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

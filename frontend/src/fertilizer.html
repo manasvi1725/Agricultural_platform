@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartKisan - Fertilizer Recommendation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+        
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #2c3e2d;
+        }
+
+        .fertilizer-container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: url('images/ferti.jpg')center/cover no-repeat;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+           /* background: rgba(244, 228, 188, 0.8);*/
+            backdrop-filter: blur(2px);
+        }
+
+        .fertilizer-content {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            width: 100%;
+            max-width: 1200px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .fertilizer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #8B4513;
+        }
+
+        .back-btn {
+            background: #6B8E23;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #556B2F;
+            transform: translateX(-3px);
+        }
+
+        .fertilizer-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2F4F2F;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .fertilizer-form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .soil-info-section {
+            background: rgba(107, 142, 35, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid rgba(107, 142, 35, 0.3);
+        }
+
+        .section-heading {
+            color: #6B8E23;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .fertilizer-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #2F4F2F;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fertilizer-input {
+            padding: 12px 15px;
+            border: 2px solid #D2B48C;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e2d;
+            transition: all 0.3s ease;
+        }
+
+        .fertilizer-input:focus {
+            outline: none;
+            border-color: #6B8E23;
+            box-shadow: 0 0 10px rgba(107, 142, 35, 0.3);
+            background: white;
+        }
+
+        .fertilizer-input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        select.fertilizer-input {
+            cursor: pointer;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236B8E23"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            appearance: none;
+        }
+
+        .get-recommendation-btn {
+            background: linear-gradient(45deg, #DAA520, #B8860B);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4);
+        }
+
+        .get-recommendation-btn:hover:not(:disabled) {
+            background: linear-gradient(45deg, #B8860B, #DAA520);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.6);
+        }
+
+        .get-recommendation-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .get-recommendation-btn:active {
+            transform: translateY(0);
+        }
+
+        .recommendation-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .recommendation-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            border: 2px solid #32CD32;
+            box-shadow: 0 8px 25px rgba(50, 205, 50, 0.2);
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .recommendation-header {
+            background: linear-gradient(45deg, #32CD32, #228B22);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .checkmark {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .recommendation-content {
+            padding: 25px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placeholder-text {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #6B8E23;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .api-status {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .api-status.online {
+            background: rgba(46, 125, 50, 0.9);
+        }
+
+        .api-status.offline {
+            background: rgba(211, 47, 47, 0.9);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .fertilizer-form-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .fertilizer-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .fertilizer-title {
+                font-size: 20px;
+            }
+            
+            .soil-info-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fertilizer-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .back-btn {
+                align-self: flex-start;
+            }
+            
+            .fertilizer-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="api-status" class="api-status">Checking API...</div>
+    
+    <div class="fertilizer-container">
+        <div class="overlay"></div>
+        <div class="fertilizer-content">
+            <div class="fertilizer-header">
+                <button class="back-btn">←</button>
+                <h1 class="fertilizer-title">FERTILIZER GUIDE | CROP ADVICE</h1>
+            </div>
+            
+            <div class="fertilizer-form-section">
+                <div class="soil-info-section">
+                    <h2 class="section-heading">ENTER SOIL INFO:</h2>
+                    
+                    <form class="fertilizer-form">
+                        <div class="form-group">
+                            <label for="crop-name">Crop Name:</label>
+                            <select id="crop-name" required class="fertilizer-input">
+                                <option value="">Select Crop</option>
+                                <option value="apple">Apple</option>
+                                <option value="banana">Banana</option>
+                                <option value="blackgram">Blackgram</option>
+                                <option value="chickpea">Chickpea</option>
+                                <option value="coconut">Coconut</option>
+                                <option value="coffee">Coffee</option>
+                                <option value="cotton">Cotton</option>
+                                <option value="grapes">Grapes</option>
+                                <option value="jute">Jute</option>
+                                <option value="kidney-bean">Kidney Bean</option>
+                                <option value="lentil">Lentil</option>
+                                <option value="maize">Maize</option>
+                                <option value="mango">Mango</option>
+                                <option value="moth-bean">Moth Bean</option>
+                                <option value="muskmelon">Muskmelon</option>
+                                <option value="mungbean">Mungbean</option>
+                                <option value="orange">Orange</option>
+                                <option value="papaya">Papaya</option>
+                                <option value="pigeon-pea">Pigeon Pea</option>
+                                <option value="pomegranate">Pomegranate</option>
+                                <option value="rice">Rice</option>
+                                <option value="watermelon">Watermelon</option>
+
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nitrogen">NITROGEN(N) mg/kg:</label>
+                            <input type="number" id="nitrogen" required class="fertilizer-input" 
+                                   placeholder="Enter nitrogen level (0-1000)" min="0" max="1000" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phosphorus">PHOSPHORUS(P) mg/kg:</label>
+                            <input type="number" id="phosphorus" required class="fertilizer-input" 
+                                   placeholder="Enter phosphorus level (0-100)" min="0" max="100" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="potassium">POTASSIUM(K) mg/kg:</label>
+                            <input type="number" id="potassium" required class="fertilizer-input" 
+                                   placeholder="Enter potassium level (0-500)" min="0" max="500" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ph-value">pH Value:</label>
+                            <input type="number" id="ph-value" step="0.1" min="0" max="14" required class="fertilizer-input" 
+                                   placeholder="Enter pH value (0-14)">
+                        </div>
+                        
+                        <button type="submit" class="get-recommendation-btn">Get Fertilizer Recommendation</button>
+                    </form>
+                </div>
+                
+                <div class="recommendation-section">
+                    <div class="recommendation-card">
+                        <div class="recommendation-header">
+                            <span class="checkmark">✓</span>
+                            <span>AI-Powered Recommendation</span>
+                        </div>
+                        <div class="recommendation-content" id="recommendationResult">
+                            <p class="placeholder-text">Enter soil information to get personalized fertilizer recommendations powered by our AI model</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:5000'; // Change this to your server URL in production
+
+        // Utility Functions
+        function showLoading(button) {
+            const originalText = button.textContent;
+            button.textContent = 'Loading...';
+            button.disabled = true;
+            button.dataset.originalText = originalText;
+            button.style.opacity = '0.7';
+        }
+
+        function hideLoading(button, defaultText = null) {
+            const originalText = button.dataset.originalText || defaultText || 'Get Recommendation';
+            button.textContent = originalText;
+            button.disabled = false;
+            button.style.opacity = '1';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                background: ${type === 'error' ? '#e74c3c' : type === 'success' ? '#27ae60' : '#3498db'};
+            `;
+            
+            const closeBtn = notification.querySelector('button');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0;
+                width: 25px;
+                height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // API Functions
+        async function fetchFromAPI(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        async function getFertilizerRecommendation(formData) {
+            return await fetchFromAPI('/api/fertilizer-recommendation', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+            });
+        }
+
+async function checkAPIHealth() {
+    try {
+        const response = await fetchFromAPI('/api/health');
+        console.log('API Health:', response);
+        return response.status === 'healthy';
+    } catch (error) {
+        console.error('API health check failed:', error);
+        return false;
+    }
+}
+
+        function updateAPIStatus(isOnline) {
+            const statusElement = document.getElementById('api-status');
+            if (isOnline) {
+                statusElement.textContent = '🟢 API Online';
+                statusElement.className = 'api-status online';
+            } else {
+                statusElement.textContent = '🔴 API Offline';
+                statusElement.className = 'api-status offline';
+            }
+        }
+
+        // Main Functions
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        async function handleFertilizerRecommendation(event) {
+            event.preventDefault();
+            
+            const formData = {
+                crop: document.getElementById('crop-name').value,
+                N: parseFloat(document.getElementById('nitrogen').value),
+                P: parseFloat(document.getElementById('phosphorus').value),
+                K: parseFloat(document.getElementById('potassium').value),
+                pH: parseFloat(document.getElementById('ph-value').value)
+            };
+             console.log('Parsed form data:', formData);
+            console.log('Validation checks:', {
+        cropEmpty: !formData.crop,
+        nIsNaN: isNaN(formData.N),
+        pIsNaN: isNaN(formData.P),
+        kIsNaN: isNaN(formData.K),
+        phIsNaN: isNaN(formData.pH)
+    });
+            if (!formData.crop || isNaN(formData.N) || isNaN(formData.P) || 
+                isNaN(formData.K) || isNaN(formData.pH)) {
+                showNotification('Please fill in all fields with valid values', 'error');
+                return;
+            }
+            
+            if (formData.pH < 0 || formData.pH > 14) {
+                showNotification('pH value must be between 0 and 14', 'error');
+                return;
+            }
+            
+            if (formData.N < 0 || formData.P < 0 || formData.K < 0) {
+                showNotification('Nutrient values cannot be negative', 'error');
+                return;
+            }
+            
+            const submitButton = document.querySelector('.get-recommendation-btn');
+            showLoading(submitButton);
+            
+            // Show loading in result area
+            const resultContainer = document.getElementById('recommendationResult');
+            resultContainer.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 15px; color: #666;">Analyzing your soil data...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await getFertilizerRecommendation(formData);
+                
+                if (response.success) {
+                    displayFertilizerRecommendation(response.recommendation, formData);
+                    showNotification('Recommendation generated successfully!', 'success');
+                } else {
+                    throw new Error('Failed to get recommendation');
+                }
+                
+            } catch (error) {
+                console.error('Error getting recommendation:', error);
+                showNotification(error.message || 'Failed to get recommendation. Please try again.', 'error');
+                displayFallbackRecommendation(formData);
+                
+            } finally {
+                hideLoading(submitButton);
+            }
+        }
+
+        function displayFertilizerRecommendation(recommendation, inputData) {
+            const resultContainer = document.getElementById('recommendationResult');
+            
+            const nutrientStatusBadges = Object.entries(recommendation.nutrient_status)
+                .map(([nutrient, status]) => {
+                    const badgeColor = status === 'low' ? '#e74c3c' : status === 'high' ? '#f39c12' : '#27ae60';
+                    return `<span class="nutrient-badge" style="background: ${badgeColor}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin: 2px;">${nutrient.toUpperCase()}: ${status.toUpperCase()}</span>`;
+                }).join('');
+            
+            const adjustmentsList = recommendation.adjustments.length > 0 
+                ? `<ul style="margin: 10px 0; padding-left: 20px;">${recommendation.adjustments.map(adj => `<li>${adj}</li>`).join('')}</ul>`
+                : '<p style="color: #27ae60; margin: 10px 0;">No adjustments needed - optimal nutrient balance!</p>';
+            
+            resultContainer.innerHTML = `
+                <div class="recommendation-result" style="text-align: left;">
+                    <div class="result-header" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #e8f5e8;">
+                        <h3 style="color: #2F4F2F; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;">
+                            🌾 Fertilizer Recommendation for ${inputData.crop.charAt(0).toUpperCase() + inputData.crop.slice(1)}
+                        </h3>
+                        <div class="nutrient-status" style="margin: 10px 0;">
+                            ${nutrientStatusBadges}
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation-details" style="background: #f8fff8; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                        <div class="rec-item" style="margin-bottom: 15px;">
+                            <strong style="color: #2F4F2F; display: block; margin-bottom: 5px;">💊 Recommended Fertilizer:</strong>
+                            <span style="background: #e8f5e8; padding: 8px 12px; border-radius: 6px; display: inline-block;">${recommendation.fertilizer}</span>
+                        </div>
+                        
+                        <div class="rec-item" style="margin-bottom: 15px;">
+                            <strong style="color: #2F4F2F; display: block; margin-bottom: 5px;">📏 Dosage:</strong>
+                            <span style="color: #27ae60; font-weight: 600;">${recommendation.dosage}</span>
+                        </div>
+                        
+                        <div class="rec-item" style="margin-bottom: 15px;">
+                            <strong style="color: #2F4F2F; display: block; margin-bottom: 5px;">⏰ Application Timing:</strong>
+                            <span style="color: #555;">${recommendation.timing}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="adjustments-section" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #f39c12;">
+                        <strong style="color: #e67e22; display: block; margin-bottom: 10px;">⚡ Adjustments Based on Soil Analysis:</strong>
+                        ${adjustmentsList}
+                    </div>
+                    
+                    <div class="ph-advice" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2196f3;">
+                        <strong style="color: #1976d2; display: block; margin-bottom: 5px;">🔬 pH Analysis:</strong>
+                        <span style="color: #555;">${recommendation.ph_advice}</span>
+                    </div>
+                    
+                    <div class="soil-analysis" style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                        <strong style="color: #7b1fa2; display: block; margin-bottom: 5px;">📊 Your Soil Analysis:</strong>
+                        <span style="color: #555; font-family: monospace;">${recommendation.soil_analysis}</span>
+                    </div>
+                    
+                    <div class="additional-tips" style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <strong style="color: #2F4F2F; display: block; margin-bottom: 10px;">💡 Additional Tips:</strong>
+                        <ul style="margin: 0; padding-left: 20px; color: #555;">
+                            <li>Always conduct soil test before fertilizer application</li>
+                            <li>Consider weather conditions when applying fertilizers</li>
+                            <li>Maintain proper irrigation after fertilizer application</li>
+                            <li>Monitor crop response and adjust accordingly</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayFallbackRecommendation(inputData) {
+            const resultContainer = document.getElementById('recommendationResult');
+            
+            const fallbackRec = {
+                fertilizer: 'NPK 20:20:20',
+                dosage: '100 kg/ha',
+                timing: 'Apply at planting time',
+                note: 'This is a general recommendation. For precise recommendations, please ensure API connection.'
+            };
+            
+            resultContainer.innerHTML = `
+                <div class="recommendation-result" style="text-align: left;">
+                    <div class="result-header" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #ffe0e0;">
+                        <h3 style="color: #c0392b; margin: 0; display: flex; align-items: center; gap: 10px;">
+                            ⚠️ Fallback Recommendation for ${inputData.crop.charAt(0).toUpperCase() + inputData.crop.slice(1)}
+                        </h3>
+                        <p style="color: #e74c3c; font-size: 14px; margin: 5px 0 0 0;">API connection failed. Showing general recommendation.</p>
+                    </div>
+                    
+                    <div class="recommendation-details" style="background: #fff8f8; padding: 20px; border-radius: 8px;">
+                        <div class="rec-item" style="margin-bottom: 10px;">
+                            <strong style="color: #2F4F2F;">Fertilizer:</strong> ${fallbackRec.fertilizer}
+                        </div>
+                        <div class="rec-item" style="margin-bottom: 10px;">
+                            <strong style="color: #2F4F2F;">Dosage:</strong> ${fallbackRec.dosage}
+                        </div>
+                        <div class="rec-item" style="margin-bottom: 10px;">
+                            <strong style="color: #2F4F2F;">Timing:</strong> ${fallbackRec.timing}
+                        </div>
+                        <div class="rec-item">
+                            <strong style="color: #2F4F2F;">Note:</strong> ${fallbackRec.note}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check API health on page load
+            const isHealthy = await checkAPIHealth();
+            updateAPIStatus(isHealthy);
+            
+            if (!isHealthy) {
+                showNotification('API connection issue. Fallback mode active.', 'error');
+            }
+            
+            // Set up form submission
+            const form = document.querySelector('.fertilizer-form');
+            if (form) {
+                form.addEventListener('submit', handleFertilizerRecommendation);
+            }
+            
+            // Set up back button
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', goBack);
+            }
+            
+            console.log('SmartKisan Fertilizer Recommendation System Initialized');
+        });
+    </script>
+</body>
+</html>
