@@ -64,7 +64,7 @@ See detailed UI, architecture and design slides here:
 > This project is not yet deployed online. You can run it locally by following these steps:
 
 1. **Clone the repository:**
-   git clone https://github.com/manasvi1725/SmartKisan.git
+   git clone https://github.com/manasvi1725/Agricultural_platform
    cd SmartKisan
 2. Create a virtual environment (optional but recommended):
    python -m venv venv
